@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./styles.css" />
+    <title>Technical Documentation Page</title>
+  </head>
+  <body>
+    <nav id="navbar">
+      <header><h1>Unity - Manuel: Scripting</h1></header>
+      <ul>
+        <li><a class="nav-link" href="#Scripting">Scripting</a></li>
+        <li><a class="nav-link" href="#Setting_Up_Your_Scripting_Environment">Setting Up Your Scripting Environment</a></li>
+        <li><a class="nav-link" href="#Scripting_Concepts">Scripting Concepts</a></li>
+        <li><a class="nav-link" href="#Important_Classes">Important Classes</a></li>
+        <li><a class="nav-link" href="#Unity_Architecture">Unity Architecture</a></li>
+        <li><a class="nav-link" href="#Plug-ins">Plug-ins</a></li>
+        <li><a class="nav-link" href="#Reference">Reference</a></li>
+      </ul>      
+    </nav>
+    
+    <main id="main-doc">
+      <section class="main-section" id="Scripting">
+        <header><h1>Scripting</h1></header>
+        <p>Scripting is an essential ingredient in all applications you make in Unity. Most applications need scripts
+ to respond to input from the player and to arrange for events in the gameplay to happen when they should. Beyond that, scripts can be used to create graphical effects, control the physical behaviour of objects or even implement a custom AI system for characters in the game.</p>
+        <p>This documentation explains the main concepts that apply to scripting in Unity.</p>
+        <ul>
+          <li>Setting Up Your Scripting Environment</li>
+          <li>Scripting Concepts</li>
+          <li>Important Classes</li>
+          <li>Unity Architecture</li>
+          <li>Plug-ins</li>
+          <li>The C# Job System</li>
+        </ul>
+      </section>
+      <section class="main-section" id="Setting_Up_Your_Scripting_Environment">
+        <header><h1>Setting Up Your Scripting Environment</h1></header>
+        <p>This section provides information on a few common tasks associated with setting up your environment for scripting.</p>
+        <p>These include:</p>
+        <ul>
+          <li><span>Integrated development environment (IDE) support</span> Use your choice of code editor when working in Unity.</li>
+          <li><span>Debugging C# code in Unity</span> Connect external debuggers to Unity to set breakpoints, and pause to inspect your project’s state.</li>
+          <li><span>Unit testing</span> Run automated tests on your code to ensure it continues to work correctly.</li>
+          <li><span>Roslyn analyzers and source generators</span> Use analyzers to inspect your code for style, quality, and other issues.</li>
+        </ul>
+      </section>
+      <section class="main-section" id="Scripting_Concepts">
+        <header><h1>Scripting Concepts</h1></header>
+        <p>Although Unity uses an implementation of the standard Mono runtime for scripting, it still has its own practices and techniques for accessing the engine from scripts
+.</p>
+        <p>Topics:</p>
+        <ul>
+          <li>Creating and Using Scripts</li>
+            <pre>
+              <code>
+using UnityEngine;
+using System.Collections;
+
+public class NewBehaviourScript : MonoBehaviour {
+
+    // Use this for initialization
+    void Start () {
+    
+    }
+    
+    // Update is called once per frame
+    void Update () {
+    
+    }
+}            </code>
+            </pre>
+          <li>Variables and the Inspector</li>
+            <pre>
+              <code>
+using UnityEngine;
+using System.Collections;
+
+public class MainPlayer : MonoBehaviour 
+{
+    public string myName = "none";
+    
+    // Use this for initialization
+    void Start () 
+    {
+        Debug.Log("I am alive and my name is " + myName);
+    }
+}             </code>
+            </pre>
+          <li>Instantiating prefabs at run time</li>
+            <pre>
+              <code>
+using UnityEngine;
+public class InstantiationExample : MonoBehaviour 
+{
+    // Reference to the Prefab. Drag a Prefab into this field in the Inspector.
+    public GameObject myPrefab;
+
+    // This script will simply instantiate the Prefab when the game starts.
+    void Start()
+    {
+        // Instantiate at position (0, 0, 0) and zero rotation.
+        Instantiate(myPrefab, new Vector3(0, 0, 0), Quaternion.identity);
+    }
+}             </code>
+            </pre>
+          <li>Order of execution for event functions</li>
+            <ul>
+              <li>First Scene Load</li>
+                <ul>
+                  <li>Awake</li>
+                  <li>OnEnable</li>
+                </ul>
+              <li>Editor</li>
+                <ul>
+                  <li>Reset</li>
+                  <li>OnValidate</li>
+                </ul>
+              <li>Before the first frame update</li>
+                <ul>
+                  <li>Start</li>
+                </ul>
+              <li>In between frames</li>
+                <ul>
+                  <li>OnApplicationPause</li>
+                </ul>
+              <li>Update Order</li>
+                <ul>
+                  <li>FixedUpdate</li>
+                  <li>Update</li>
+                  <li>LateUpdate</li>
+                </ul>
+              <li>Animation update loop</li>
+              <ul>
+                  <li>OnStateMachineEnter</li>
+                  <li>OnStateMachineExit</li>
+                  <li>Fire Animation Events</li>
+                  <li>StateMachineBehaviour (OnStateEnter/OnStateUpdate/OnStateExit)</li>
+                  <li>OnAnimatorMove</li>
+                  <li>StateMachineBehaviour(OnStateMove)</li>
+                  <li>OnAnimatorIK</li>
+                  <li>StateMachineBehaviour(OnStateIK)</li>
+                  <li>WriteProperties</li>
+                </ul>
+              <li>Useful profile markers</li>
+                <ul>
+                  <li>State Machine Update</li>
+                  <li>ProcessGraph</li>
+                  <li>ProcessAnimation</li>
+                  <li>WriteTransforms</li>
+                </ul>
+              <li>Rendering</li>
+                <ul>
+                  <li>OnPreCull</li>
+                  <li>OnBecameVisible/OnBecameInvisible</li>
+                  <li>OnWillRenderObject</li>
+                  <li>OnPreRender</li>
+                  <li>OnRenderObject</li>
+                  <li>OnPostRender</li>
+                  <li>OnRenderImage</li>
+                  <li>OnGUI</li>
+                  <li>OnDrawGizmos </li>
+                </ul>
+              <li>Coroutines</li>
+                <ul>
+                  <li>yield</li>
+                  <li>yield WaitForSeconds</li>
+                  <li>yield WaitForFixedUpdate</li>
+                  <li>yield WWW</li>
+                  <li>yield StartCoroutine</li>
+                </ul>
+              <li>When the Object is destroyed</li>
+                <ul>
+                  <li>OnDestroy</li>
+                </ul>
+              <li>When quitting</li>
+                <ul>
+                  <li>OnApplicationQuit</li>
+                  <li>OnDisable</li>
+                </ul>
+            </ul>
+          <li>Event Functions</li>
+            <pre>
+              <code>
+void Update() {
+    float distance = speed * Time.deltaTime * Input.GetAxis("Horizontal");
+    transform.Translate(Vector3.right * distance);
+}             </code>
+            </pre>
+            <pre>
+              <code>
+void FixedUpdate() {
+    Vector3 force = transform.forward * driveForce * Input.GetAxis("Vertical");
+    rigidbody.AddForce(force);
+}             </code>
+            </pre>
+            <pre>
+              <code>
+void LateUpdate() {
+    Camera.main.transform.LookAt(target.transform);
+}             </code>
+            </pre>
+            <pre>
+              <code>
+void OnGUI() {
+    GUI.Label(labelRect, "Game Over");
+}             </code>
+            </pre>
+            <pre>
+              <code>
+void OnCollisionEnter(otherObj: Collision) {
+    if (otherObj.tag == "Arrow") {
+        ApplyDamage(10);
+    }
+}             </code>
+            </pre>
+          <li>Coroutines</li>
+            <pre>
+              <code>
+IEnumerator Fade()
+{
+    Color c = renderer.material.color;
+    for (float alpha = 1f; alpha >= 0; alpha -= 0.1f)
+    {
+        c.a = alpha;
+        renderer.material.color = c;
+        yield return null;
+    }
+}             </code>
+            </pre>
+            <pre>
+              <code>
+void Update()
+{
+    if (Input.GetKeyDown("f"))
+    {
+        StartCoroutine(Fade());
+    }
+}             </code>
+            </pre>
+          <li>Namespaces</li>
+            <pre>
+              <code>
+namespace Enemy {
+    public class Controller1 : MonoBehaviour {
+        ...
+    }
+    
+    public class Controller2 : MonoBehaviour {
+        ...
+    }
+}             </code>
+            </pre>
+            <pre>
+              <code>
+using Enemy;  </code>
+            </pre>
+          <li>Attributes</li>
+            <pre>
+              <code>
+[HideInInspector]
+public float strength;</code>
+            </pre>
+          <li>UnityEvents</li>
+            <p>To configure a callback in the editor there are a few steps to take:</p>
+            <ol>
+              <li>Make sure your script imports/uses <span>UnityEngine.Events</span></li>
+              <li>Select the + icon to add a slot for a callback</li>
+              <li>Select the UnityEngine.Object you wish to receive the callback (You can use the object selector for this)</li>
+              <li>Select the function you wish to be called</li>
+              <li>You can add more than one callback for the event</li>
+            </ol>
+          <li>Null Reference Exceptions</li>
+            <p>A <span>NullReferenceException</span> happens when you try to access a reference variable that doesn’t reference any object. When you try to access a reference variable that doesn’t reference an object, the reference type defaults to <span>null</span> and Unity returns a <span>NullReferenceException</span>.</p>
+            <pre>
+              <code>
+using UnityEngine;
+using System.Collections;
+
+public class Example : MonoBehaviour {
+
+    void Start () {
+        GameObject go = GameObject.Find("exampleGameObject");
+        if (go) {
+            Debug.Log(go.name);
+        } else {
+            Debug.Log("No GameObject called exampleGameObject found");
+        }
+    }
+        
+}</code>
+            </pre>
+            <pre>
+              <code>
+using UnityEngine;
+using System;
+using System.Collections;
+
+public class Example2 : MonoBehaviour {
+
+    public Light myLight; // set in the inspector
+    
+    void Start () {
+        try {
+            myLight.color = Color.yellow;
+        }       
+        catch (NullReferenceException ex) {
+            Debug.Log("myLight was not set in the inspector");
+        }
+    }
+    
+}</code>
+            </pre>
+        </ul>
+      </section>
+      <section class="main-section" id="Important_Classes">
+        <header><h1>Important Classes</h1></header>
+        <p>This section provides an overview of some of the most commonly used and important built-in classes in Unity that you may want to use when scripting.</p>
+        <ul>
+          <li>GameObject
+</li>
+          <li>MonoBehaviour</li>
+          <li>Object</li>
+          <li>Transform</li>
+          <li>Vectors</li>
+          <li>Quaternion</li>
+          <li>ScriptableObject</li>
+          <li>Time (and framerate management)</li>
+          <li>Mathf</li>
+          <li>Random</li>
+          <li>Debug</li>
+          <li>Gizmos and Handles</li>
+        </ul>
+      </section>
+      <section class="main-section" id="Unity_Architecture">
+        <header><h1>Unity Architecture</h1></header>
+        <p>The Unity engine is built with native C/C++ internally, however it has a C# wrapper that you use to interact with it. As such, you need to be familiar with some of the key concepts of scripting in C#.</p>
+        <p>Unity has two main scripting backends: Mono and IL2CPP.</p>
+      </section>
+      <section class="main-section" id="Plug-ins">
+        <header><h1>Plug-ins</h1></header>
+        <p>In Unity, you normally use scripts
+ to create functionality, but you can also include code created outside Unity in the form of a plug-in. You can use two different kinds of plug-in in Unity:</p>
+        <ul>
+          <li><b>Managed plug-ins:</b> managed .NET assemblies you can create with tools like Visual Studio. They only contain .NET code, which means they can’t access any features that the .NET libraries do not support.</li>
+          <li><b>Native plug-ins:</b> platform-specific native code libraries. They can access features like operating system calls and third-party code libraries that would otherwise be unavailable to Unity.</li>
+        </ul>
+        <p>Managed code is accessible to the standard .NET tools that Unity uses to compile scripts. The only difference between managed plug-in code and Unity script code is that the plug-ins are compiled outside of Unity and so Unity might not be able to access the source. When using native plug-ins, Unity’s tools can’t access third-party code libraries in the same way that they can access the managed libraries. For example, if you forget to add a managed plug-in file to the project, you will get standard compiler error messages. Whereas, if you forget to add a native plug-in file to the project, you will only see an error report when you try to run the project.</p>
+      </section>
+      <section class="main-section" id="Reference">
+        <header><h1>Reference</h1></header>
+        <p>All the documentation in this page is taken from <a href="https://docs.unity3d.com/Manual/ScriptingSection.html" target="_blank">Unity User Manual</a>.</p>
+      </section>
+    </main>    
+  </body>
+</html>
